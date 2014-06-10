@@ -1,0 +1,28 @@
+{
+  "name": "consuela",
+  "version": "0.0.0",
+  "description": "No no.. I clean.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "grape": "^1.0.0"
+  },
+  "dependencies": {
+    "grape": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/KoryNunn/consuela.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KoryNunn/consuela/issues"
+  },
+  "homepage": "https://github.com/KoryNunn/consuela"
+}
