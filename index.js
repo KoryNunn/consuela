@@ -41,7 +41,7 @@ Consuela.prototype._offNames = 'off removeListener removeEventListener';
 Consuela.prototype._on = function(emitter, args, offName){
     this._trackedListeners.push({
         emitter: emitter,
-        args: args,
+        args: Array.prototype.slice.call(args),
         offName: offName
     });
 };
