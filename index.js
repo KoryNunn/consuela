@@ -11,31 +11,7 @@ function getListenerMethod(emitter, methodNames){
 
 function Consuela(){
     this._trackedListeners = [];
-    if(getListenerMethod(this, this._onNames)){
-        this._watch(this);
-    }
 }
-Consuela.init = function(instance){
-    // If passed a constructor
-    if(typeof instance === 'function'){
-        var Constructor = new Function("instance", "Consuela", "return function " + instance.name + "(){Consuela.call(this);return instance.apply(this, arguments);}")(instance, Consuela);
-
-        Constructor.prototype = Object.create(instance.prototype);
-        Constructor.prototype.constructor = Constructor;
-        Constructor.name = instance.name;
-        console.log(Constructor.name);
-        for(var key in Consuela.prototype){
-            Constructor.prototype[key] = Consuela.prototype[key];
-        }
-        return Constructor;
-    }
-
-    // Otherwise, if passed an instance
-    for(var key in Consuela.prototype){
-        instance[key] = Consuela.prototype[key];
-    }
-    Consuela.call(instance);
-};
 Consuela.prototype._onNames = 'on addListener addEventListener';
 Consuela.prototype._offNames = 'off removeListener removeEventListener';
 Consuela.prototype._on = function(emitter, args, offName){
@@ -45,7 +21,7 @@ Consuela.prototype._on = function(emitter, args, offName){
         offName: offName
     });
 };
-Consuela.prototype._cleanup = function(){
+Consuela.prototype.cleanup = function(){
     while(this._trackedListeners.length){
         var info = this._trackedListeners.pop(),
             emitter = info.emitter,
@@ -59,7 +35,7 @@ Consuela.prototype._cleanup = function(){
             .apply(emitter, info.args);
     }
 };
-Consuela.prototype._watch = function(emitter, onName, offName){
+Consuela.prototype.watch = function(emitter, onName, offName){
     var consuela = this,
         onNames = this._onNames;
 
