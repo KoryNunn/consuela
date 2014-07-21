@@ -12,9 +12,9 @@ function getListenerMethod(emitter, methodNames){
 function Consuela(){
     this._trackedListeners = [];
 }
-Consuela.prototype._onNames = 'on addListener addEventListener';
-Consuela.prototype._offNames = 'off removeListener removeEventListener';
-Consuela.prototype._on = function(emitter, args, offName){
+Consuela.prototype.onNames = 'on addListener addEventListener';
+Consuela.prototype.offNames = 'off removeListener removeEventListener';
+Consuela.prototype.on = function(emitter, args, offName){
     this._trackedListeners.push({
         emitter: emitter,
         args: Array.prototype.slice.call(args),
@@ -25,7 +25,7 @@ Consuela.prototype.cleanup = function(){
     while(this._trackedListeners.length){
         var info = this._trackedListeners.pop(),
             emitter = info.emitter,
-            offNames = this._offNames;
+            offNames = this.offNames;
 
         if(info.offName){
             offNames = [info.offName];
@@ -37,7 +37,7 @@ Consuela.prototype.cleanup = function(){
 };
 Consuela.prototype.watch = function(emitter, onName, offName){
     var consuela = this,
-        onNames = this._onNames;
+        onNames = this.onNames;
 
     if(onName){
         onNames = [onName];
@@ -47,7 +47,7 @@ Consuela.prototype.watch = function(emitter, onName, offName){
         oldOn = emitter[method];
 
     emitter[method] = function(){
-        consuela._on(emitter, arguments, offName);
+        consuela.on(emitter, arguments, offName);
         oldOn.apply(emitter, arguments);
     };
 };
