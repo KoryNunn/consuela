@@ -14,7 +14,7 @@ function Consuela(){
 }
 Consuela.prototype.onNames = 'on addListener addEventListener';
 Consuela.prototype.offNames = 'off removeListener removeEventListener';
-Consuela.prototype.on = function(emitter, args, offName){
+Consuela.prototype._on = function(emitter, args, offName){
     this._trackedListeners.push({
         emitter: emitter,
         args: Array.prototype.slice.call(args),
@@ -47,7 +47,7 @@ Consuela.prototype.watch = function(emitter, onName, offName){
         oldOn = emitter[method];
 
     emitter[method] = function(){
-        consuela.on(emitter, arguments, offName);
+        consuela._on(emitter, arguments, offName);
         oldOn.apply(emitter, arguments);
     };
 };
