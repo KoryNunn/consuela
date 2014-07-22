@@ -21,6 +21,29 @@ Consuela.prototype._on = function(emitter, args, offName){
         offName: offName
     });
 };
+function compareArgs(args1, args2){
+    if(args1.length !== args2.length){
+        return;
+    }
+    for (var i = 0; i < args1.length; i++) {
+        if(args1[i] !== args2[i]){
+            return;
+        }
+    };
+    return true;
+}
+Consuela.prototype._off = function(emitter, args, offName){
+    for (var i = 0; i < this._trackedListeners.length; i++) {
+        var info = this._trackedListeners[i];
+
+        if(emitter !== info.emitter || !compareArgs(info.args, args)){
+            continue;
+        }
+
+        this._trackedListeners.splice(i, 1);
+        i--;
+    };
+};
 Consuela.prototype.on = function(emitter, args, offName){
     var method = getListenerMethod(emitter, this.onNames),
         oldOn = emitter[method];
@@ -44,24 +67,43 @@ Consuela.prototype.cleanup = function(){
 };
 Consuela.prototype.watch = function(emitter, onName, offName){
     var consuela = this,
-        onNames = this.onNames;
+        onNames = this.onNames,
+        offNames = this.offNames;
 
     if(onName){
         onNames = [onName];
     }
 
-    var method = getListenerMethod(emitter, onNames),
-        oldOn = emitter[method];
+    var onMethod = getListenerMethod(emitter, onNames),
+        oldOn = emitter[onMethod];
 
-    if(emitter[method].__isConsuelaOverride){
+    if(emitter[onMethod].__isConsuelaOverride){
         return;
     }
 
-    emitter[method] = function(){
+    emitter[onMethod] = function(){
         consuela._on(emitter, arguments, offName);
         oldOn.apply(emitter, arguments);
     };
-    emitter[method].__isConsuelaOverride = true;
+    emitter[onMethod].__isConsuelaOverride = true;
+
+
+    if(offName){
+        offNames = [offName];
+    }
+
+    var offMethod = getListenerMethod(emitter, offNames),
+        oldOff = emitter[offMethod];
+
+    if(emitter[offMethod].__isConsuelaOverride){
+        return;
+    }
+
+    emitter[offMethod] = function(){
+        consuela._off(emitter, arguments, offName);
+        oldOff.apply(emitter, arguments);
+    };
+    emitter[offMethod].__isConsuelaOverride = true;
 };
 
 module.exports = Consuela;
