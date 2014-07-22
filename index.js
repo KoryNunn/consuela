@@ -21,6 +21,13 @@ Consuela.prototype._on = function(emitter, args, offName){
         offName: offName
     });
 };
+Consuela.prototype.on = function(emitter, args, offName){
+    var method = getListenerMethod(emitter, this.onNames),
+        oldOn = emitter[method];
+
+    this._on(emitter, args, offName);
+    oldOn.apply(emitter, args);
+};
 Consuela.prototype.cleanup = function(){
     while(this._trackedListeners.length){
         var info = this._trackedListeners.pop(),
@@ -46,10 +53,15 @@ Consuela.prototype.watch = function(emitter, onName, offName){
     var method = getListenerMethod(emitter, onNames),
         oldOn = emitter[method];
 
+    if(emitter[method].__isConsuelaOverride){
+        return;
+    }
+
     emitter[method] = function(){
         consuela._on(emitter, arguments, offName);
         oldOn.apply(emitter, arguments);
     };
+    emitter[method].__isConsuelaOverride = true;
 };
 
 module.exports = Consuela;
